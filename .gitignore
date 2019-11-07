@@ -1,0 +1,6 @@
+log/**/*.log
+src/**/*.pyc
+static/**
+media/**
+db/data/**
+!__init__.txt

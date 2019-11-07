@@ -1,0 +1,47 @@
+version: '3.7'
+
+services:
+  nginx :
+    image: nginx:1.17.4
+    container_name: nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d
+      - ./nginx/uwsgi_params:/etc/nginx/uwsgi_params 
+      - ./static:/static
+      - ./media:/media
+      - ./log/nginx/:/var/log/nginx
+    depends_on:
+      - web
+
+  db:
+    image : mysql:8.0.18
+    container_name: mysql.db
+    volumes:
+      - ./db/data:/var/lib/mysql              # データの永続化を行う
+      - ./db/conf/:/etc/mysql/conf.d/         # 設定ファイルをここから設定ファイルを読み込ませる
+      - ./db/sqls:/docker-entrypoint-initdb.d # 初期データを与える場合はここから読み込ませる
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PW}       #rootパスワードの設定
+      - MYSQL_DATABASE=mysite
+      - TZ=Asia/Tokyo
+
+  web:
+    build:
+      context: ./web
+      args:
+        - DUID=${DUID}
+        - DGID=${DGID}
+    user: ${DUID}:${DGID}
+    container_name: django.web
+    command: uwsgi --ini /code/mysite/mysite/uwsgi.ini
+    volumes:
+      - ./src:/code
+      - ./static:/static
+      - ./media:/media
+      - ./log/uwsgi/:/var/log/uwsgi
+    expose:
+      - "8001"
+    links:
+      - db
