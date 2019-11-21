@@ -88,7 +88,7 @@ DUID=$(id -u) DGID=$(id -g) MYSQL_PW docker-compose $1 $2 $3 $4 $5 $6 $7 $8 $9
 
 1. git clone します<br />
   **注意**<br />
-  clone 出来たらまず `db/__init__.txt` ファイルを削除して下さい。<br />
+  clone 出来たらまず `db/data/__init__.txt` ファイルを削除して下さい。<br />
   これがあると MySQL の初期化で失敗しエラーが出ます。
   次に、docom.sh を編集して MYSQL_PW=mysql_root_password のようにパスワード文字列を入れて下さい。<br />
 
